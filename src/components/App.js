@@ -26,6 +26,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuth, setIsAuth] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -150,14 +151,15 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className='root'>
-        <Header />
-        <Switch>
-          <Route path='/login'>
-            <Login />
-          </Route>
-        </Switch>
-
-        {/* <Main
+        <Header isAuth={isAuth} />
+        <Route path='/sign-in'>
+          <Login />
+        </Route>
+        <Route path='/sign-up'>
+          <Register />
+        </Route>
+        <ProtectedRoute
+          component={Main}
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
@@ -165,12 +167,12 @@ function App() {
           cards={cards}
           onCardLike={handleCardLike}
           onCardDelete={handleCardDeleteWithConfirm}
-        /> */}
-        {/* <Register/> */}
-        {/* <Login /> */}
+          path='/'
+          loggedIn={isAuth}
+        ></ProtectedRoute>
         {/* <InfoToolTip /> */}
         <Footer />
-        <EditProfilePopup
+        {/* <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
@@ -199,7 +201,7 @@ function App() {
           onClose={closeAllPopups}
           onConfirm={handleCardDelete}
           isLoading={isLoading}
-        />
+        /> */}
         <Spinner isLoading={isLoading} />
       </div>
     </CurrentUserContext.Provider>

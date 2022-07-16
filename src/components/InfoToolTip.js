@@ -1,7 +1,6 @@
 import React from 'react';
 import Accepted from '../images/Accepted.png';
 import Error from '../images/Error.png';
-import { popupClassStyle } from '../utils/utils';
 
 function InfoToolTip() {
   const getText = (isSuccess) => {
