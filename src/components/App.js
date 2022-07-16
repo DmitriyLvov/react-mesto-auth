@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -8,6 +10,9 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ConfirmPopup from './ConfirmPopup';
 import Spinner from './Spinner';
+import Register from './Register';
+import Login from './Login';
+import InfoToolTip from './InfoToolTip';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import api from '../utils/api';
 
@@ -146,7 +151,13 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className='root'>
         <Header />
-        <Main
+        <Switch>
+          <Route path='/login'>
+            <Login />
+          </Route>
+        </Switch>
+
+        {/* <Main
           onEditProfile={handleEditProfileClick}
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
@@ -154,7 +165,10 @@ function App() {
           cards={cards}
           onCardLike={handleCardLike}
           onCardDelete={handleCardDeleteWithConfirm}
-        />
+        /> */}
+        {/* <Register/> */}
+        {/* <Login /> */}
+        {/* <InfoToolTip /> */}
         <Footer />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
