@@ -1,25 +1,23 @@
+import { getResponseData } from './utils';
+
 class Api {
   constructor(baseURL, headers) {
     this._baseURL = baseURL;
     this._headers = headers;
   }
 
-  _getResponseData(res) {
-    return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
-  }
-
   getAuthorInfo = () => {
     //Запрос данных с сервера
     return fetch(`${this._baseURL}/users/me`, {
       headers: this._headers,
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   getCards = () => {
     //Запрос карточек с сервера
     return fetch(`${this._baseURL}/cards`, {
       headers: this._headers,
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   setUserInfo = (data) => {
@@ -31,7 +29,7 @@ class Api {
         name,
         about,
       }),
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   addNewCard = (data) => {
@@ -43,28 +41,28 @@ class Api {
         name,
         link,
       }),
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   removeCard = (cardId) => {
     return fetch(`${this._baseURL}/cards/${cardId}`, {
       method: 'DELETE',
       headers: this._headers,
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   addLike = (cardId) => {
     return fetch(`${this._baseURL}/cards/${cardId}/likes`, {
       method: 'PUT',
       headers: this._headers,
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   removeLike = (cardId) => {
     return fetch(`${this._baseURL}/cards/${cardId}/likes`, {
       method: 'DELETE',
       headers: this._headers,
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 
   setAvatar = (avatar) => {
@@ -74,7 +72,7 @@ class Api {
       body: JSON.stringify({
         avatar,
       }),
-    }).then((res) => this._getResponseData(res));
+    }).then((res) => getResponseData(res));
   };
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Header from './Header';
 import Main from './Main';
@@ -15,6 +15,7 @@ import Login from './Login';
 import InfoToolTip from './InfoToolTip';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import api from '../utils/api';
+import authApi from '../utils/authApi';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -26,7 +27,14 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuth, setIsAuth] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
+  const [headerType, setHeaderType] = useState('register');
+  const [tooltipData, setTooltipData] = useState({
+    isOpen: false,
+    isSucces: true,
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
@@ -62,6 +70,7 @@ function App() {
     setIsConfirmPopupOpen(false);
     setSelectedCard({ name: '', link: '', id: '' });
     setIsLoading(false);
+    setTooltipData((prevState) => ({ ...prevState, isOpen: false }));
   };
 
   const handleCardClick = (card) => {
@@ -70,7 +79,7 @@ function App() {
   };
 
   //Перезаписываем данные пользователя из ответа сервера
-  const updataUserData = (res) => {
+  const updateUserData = (res) => {
     setCurrentUser({ ...res });
     closeAllPopups();
   };
@@ -81,7 +90,7 @@ function App() {
     api
       .setUserInfo(userInfo)
       .then((res) => {
-        updataUserData(res);
+        updateUserData(res);
       })
       .catch((er) => console.log(`Ошибка обновления данных пользователя`, er));
   };
@@ -92,7 +101,7 @@ function App() {
     api
       .setAvatar(avatar)
       .then((res) => {
-        updataUserData(res);
+        updateUserData(res);
       })
       .catch((er) => console.log('Ошика обновления аватара', er));
   };
@@ -147,31 +156,78 @@ function App() {
       })
       .catch((er) => console.log('Ошибка добавления нового места', er));
   };
+  //Регистрация нового пользователя
+  const handleRegisterUser = (data) => {
+    authApi
+      .registerNewUser(data)
+      .then((res) => {
+        setTooltipData({ isOpen: true, isSucces: true });
+      })
+      .catch((er) => {
+        setTooltipData({ isOpen: true, isSucces: false });
+        console.log('Ошибка при регистрации нового польщователя', er);
+      });
+  };
+  //Процедура Login на сайте
+  const login = (data) => {
+    authApi
+      .login(data)
+      .then((res) => {
+        authApi.getUserInfo(res.token).then((res) => {
+          console.log(res.data.email);
+          setHeaderType(res.data.email);
+          setIsAuth(true);
+          navigate('/');
+        });
+      })
+      .catch((er) => {
+        setTooltipData({ isOpen: true, isSucces: false });
+        console.log('Ошибка при входе', er);
+      });
+  };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className='root'>
-        <Header isAuth={isAuth} />
-        <Route path='/sign-in'>
-          <Login />
-        </Route>
-        <Route path='/sign-up'>
-          <Register />
-        </Route>
-        <ProtectedRoute
-          component={Main}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          handleCardClick={handleCardClick}
-          cards={cards}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDeleteWithConfirm}
-          path='/'
-          loggedIn={isAuth}
-        ></ProtectedRoute>
-        {/* <InfoToolTip /> */}
+        <Header panelType={headerType} />
+        <Routes>
+          <Route
+            path='/sign-in'
+            element={<Login login={login} setHeaderType={setHeaderType} />}
+          />
+          <Route
+            path='/sign-up'
+            element={
+              <Register
+                handleRegisterUser={handleRegisterUser}
+                setHeaderType={setHeaderType}
+              />
+            }
+          />
+          <Route
+            path='/'
+            element={
+              <ProtectedRoute
+                element={Main}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onEditAvatar={handleEditAvatarClick}
+                handleCardClick={handleCardClick}
+                cards={cards}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDeleteWithConfirm}
+                path='/'
+                loggedIn={isAuth}
+              />
+            }
+          />
+        </Routes>
         <Footer />
+        <InfoToolTip
+          isOpen={tooltipData.isOpen}
+          isSuccess={tooltipData.isSucces}
+          onClose={closeAllPopups}
+        />
         {/* <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
