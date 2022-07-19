@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { useForm } from '../hooks/useForm';
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
-  const [formValues, setFormValues] = useState({ name: '', about: '' });
+  const { formValues, setFormValues, handleChangeInput } = useForm({
+    name: '',
+    about: '',
+  });
   const currentUser = useContext(CurrentUserContext);
   //Установка данных пользователя по умолчанию
   useEffect(() => {
@@ -13,12 +17,6 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
       setFormValues({ name, about });
     }
   }, [currentUser, isOpen]);
-
-  //Обработка инпутов
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevState) => ({ ...prevState, [name]: value }));
-  };
 
   //Подтверждение сохранения картинки
   const handleSubmit = (e) => {
@@ -37,7 +35,8 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
       buttonText='Сохранить'
       buttonTextOnLoading='Сохранение'
       onSubmit={handleSubmit}
-      isLoading={isLoading}>
+      isLoading={isLoading}
+    >
       <input
         id='author'
         name='name'

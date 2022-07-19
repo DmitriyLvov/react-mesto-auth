@@ -2,10 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UserLoginInfo from './UserLoginInfo';
 
-function Register({ handleRegisterUser, setHeaderType }) {
-  useEffect(() => {
-    setHeaderType('login');
-  }, []);
+function Register({ handleRegisterUser }) {
   return (
     <>
       <UserLoginInfo

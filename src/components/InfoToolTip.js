@@ -13,18 +13,21 @@ function InfoToolTip({ isSuccess, isOpen, onClose }) {
     return isSuccess ? Accepted : Error;
   };
   return (
-    <>
-      <div className={popupClassStyle('form', isOpen)}>
-        <div className='popup__container popup__container_type_form'>
-          <button
-            type='button'
-            className='popup__close-button'
-            onClick={onClose}></button>
-          <img className='popup__tooltip-image' src={getImage(isSuccess)} />
-          <p className='popup__tooltip-text'>{getText(isSuccess)}</p>
-        </div>
+    <div className={popupClassStyle('form', isOpen)}>
+      <div className='popup__container popup__container_type_form'>
+        <button
+          type='button'
+          className='popup__close-button'
+          onClick={onClose}
+        ></button>
+        <img
+          className='popup__tooltip-image'
+          alt='TooltipImage'
+          src={getImage(isSuccess)}
+        />
+        <p className='popup__tooltip-text'>{getText(isSuccess)}</p>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import PopupWithForm from './PopupWithForm';
+import { useForm } from '../hooks/useForm';
 
 function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
-  const [formValues, setFormValues] = useState({ name: '', link: '' });
-  //Обработка инпутов
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevState) => ({ ...prevState, [name]: value }));
-  };
+  //Хук для измеения инпутов
+  const { formValues, handleChangeInput } = useForm({
+    name: '',
+    link: '',
+  });
+
   //Подтверждение сохранения картинки
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +25,8 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
       onSubmit={handleSubmit}
       buttonText='Добавить'
       buttonTextOnLoading='Добавление'
-      isLoading={isLoading}>
+      isLoading={isLoading}
+    >
       <input
         id='name'
         name='name'
@@ -32,6 +34,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
         type='text'
         placeholder='Название'
         onChange={handleChangeInput}
+        value={formValues.name}
         minLength='2'
         maxLength='30'
         required
@@ -43,6 +46,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
         className='popup__text-input popup__text-input_order_next popup__text-input_type_picture-path'
         onChange={handleChangeInput}
         type='url'
+        value={formValues.link}
         placeholder='Ссылка на картинку'
         required
       />

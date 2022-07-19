@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
+import { useForm } from '../hooks/useForm';
 
 function UserLoginInfo({ title, buttonText, onSubmit }) {
-  const [formValues, setFormValues] = useState({ email: '', password: '' });
-  //Обработка инпутов
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevState) => ({ ...prevState, [name]: value }));
-  };
+  const { formValues, handleChangeInput } = useForm({
+    email: '',
+    password: '',
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +19,7 @@ function UserLoginInfo({ title, buttonText, onSubmit }) {
         placeholder='Email'
         name='email'
         type='email'
+        value={formValues.email}
         onChange={handleChangeInput}
       />
       <input
@@ -28,6 +28,7 @@ function UserLoginInfo({ title, buttonText, onSubmit }) {
         name='password'
         type='password'
         onChange={handleChangeInput}
+        value={formValues.password}
       />
       <button className='popup__submit-button popup__submit-button-type_login'>
         {buttonText}

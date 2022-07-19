@@ -29,7 +29,7 @@ function App() {
   const [cards, setCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
-  const [headerType, setHeaderType] = useState('register');
+  const [email, setEmail] = useState('');
   const [tooltipData, setTooltipData] = useState({
     isOpen: false,
     isSucces: true,
@@ -43,10 +43,12 @@ function App() {
       .then(([cards, userInfo]) => {
         setCards(cards);
         setCurrentUser({ ...userInfo });
-        setIsLoading(false);
       })
       .catch((err) => {
         console.log(`Ошибка запроса стартовой информации: ${err}`);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -58,7 +60,7 @@ function App() {
         .getUserInfo(token)
         .then((res) => {
           //Изменяем Header на e-mail пользователя
-          setHeaderType(res.data.email);
+          setEmail(res.data.email);
           //Устанавливаем флаг авторизации
           setIsAuth(true);
           //Перенаправляем на главную
@@ -108,6 +110,27 @@ function App() {
     setIsLoading(false);
     setTooltipData((prevState) => ({ ...prevState, isOpen: false }));
   };
+
+  //Обрботчк закрытия popup по клавише ESC
+  const isOpen =
+    isEditAvatarPopupOpen ||
+    isEditProfilePopupOpen ||
+    isAddPlacePopupOpen ||
+    isImagePopupOpen;
+
+  useEffect(() => {
+    function closeByEscape(evt) {
+      if (evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      };
+    }
+  }, [isOpen]);
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -213,7 +236,7 @@ function App() {
         //Сохраняем токен в локальном хранилище
         localStorage.setItem('jwt', res.token);
         //Изменяем Header на e-mail пользователя
-        setHeaderType(data.email);
+        setEmail(data.email);
         //Устанавливаем флаг авторизации
         setIsAuth(true);
         //Перенаправляем на главную
@@ -245,11 +268,11 @@ function App() {
       <div className='root'>
         <UserInfoPopup
           handleLogout={handleLogout}
-          email={headerType}
+          email={email}
           isVisible={isHeaderPopupOpen}
         />
         <Header
-          panelType={headerType}
+          email={email}
           handleLogout={handleLogout}
           handleToggleHeaderPopupVisble={handleToggleHeaderPopupVisble}
           isHeaderPopupOpen={isHeaderPopupOpen}
@@ -258,18 +281,11 @@ function App() {
         <Routes>
           <Route
             path='/sign-in'
-            element={
-              <Login handleLogin={handleLogin} setHeaderType={setHeaderType} />
-            }
+            element={<Login handleLogin={handleLogin} />}
           />
           <Route
             path='/sign-up'
-            element={
-              <Register
-                handleRegisterUser={handleRegisterUser}
-                setHeaderType={setHeaderType}
-              />
-            }
+            element={<Register handleRegisterUser={handleRegisterUser} />}
           />
           <Route
             path='/'

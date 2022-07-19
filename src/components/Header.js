@@ -1,44 +1,14 @@
 import React from 'react';
 import logo from '../images/logo.svg';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
 
 function Header({
-  panelType,
+  email,
   handleLogout,
   handleToggleHeaderPopupVisble,
   isHeaderPopupOpen,
   isAuth,
 }) {
-  const getPanel = (panelType) => {
-    switch (panelType) {
-      case 'login': {
-        return (
-          <Link to='/sign-in' className='header__button'>
-            Войти
-          </Link>
-        );
-      }
-      case 'register': {
-        return (
-          <Link to='/sign-up' className='header__button'>
-            Регистрация
-          </Link>
-        );
-      }
-      default: {
-        return (
-          <div className='header__panel'>
-            <p className='header__text'>{panelType}</p>
-            <button
-              className='header__button header__button_type_gray'
-              onClick={handleLogout}>
-              Выйти
-            </button>
-          </div>
-        );
-      }
-    }
-  };
   const closeButtonStyle =
     !isHeaderPopupOpen || !isAuth ? { display: 'none' } : {};
   const menuButtonStyle =
@@ -50,7 +20,8 @@ function Header({
         className='header__menu'
         onClick={handleToggleHeaderPopupVisble}
         type='button'
-        style={menuButtonStyle}>
+        style={menuButtonStyle}
+      >
         <div className='header__menu-line' />
         <div className='header__menu-line' />
         <div className='header__menu-line' />
@@ -59,8 +30,42 @@ function Header({
         type='button'
         onClick={handleToggleHeaderPopupVisble}
         style={closeButtonStyle}
-        className='popup__close-button popup__close-button_type_header'></button>
-      {getPanel(panelType)}
+        className='popup__close-button popup__close-button_type_header'
+      ></button>
+      <Routes>
+        <Route
+          exact
+          path='/'
+          element={
+            <div className='header__panel'>
+              <p className='header__text'>{email}</p>
+              <button
+                className='header__button header__button_type_gray'
+                onClick={handleLogout}
+              >
+                Выйти
+              </button>
+            </div>
+          }
+        />
+        <Route
+          path='/sign-up'
+          element={
+            <Link to='/sign-in' className='header__button'>
+              Войти
+            </Link>
+          }
+        />
+
+        <Route
+          path='/sign-in'
+          element={
+            <Link to='/sign-up' className='header__button'>
+              Регистрация
+            </Link>
+          }
+        />
+      </Routes>
     </header>
   );
 }

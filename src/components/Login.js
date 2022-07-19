@@ -1,15 +1,9 @@
 import React, { useEffect } from 'react';
 import UserLoginInfo from './UserLoginInfo';
 
-function Login({ handleLogin, setHeaderType }) {
-  useEffect(() => {
-    setHeaderType('register');
-  }, []);
+function Login({ handleLogin }) {
   return (
-    <UserLoginInfo
-      title='Вход'
-      buttonText='Войти'
-      onSubmit={handleLogin}></UserLoginInfo>
+    <UserLoginInfo title='Вход' buttonText='Войти' onSubmit={handleLogin} />
   );
 }
 
