@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import UserLoginInfo from './UserLoginInfo';
 
-function Login({ login, setHeaderType }) {
+function Login({ handleLogin, setHeaderType }) {
   useEffect(() => {
     setHeaderType('register');
   }, []);
@@ -9,7 +9,7 @@ function Login({ login, setHeaderType }) {
     <UserLoginInfo
       title='Вход'
       buttonText='Войти'
-      onSubmit={login}></UserLoginInfo>
+      onSubmit={handleLogin}></UserLoginInfo>
   );
 }
 

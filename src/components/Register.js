@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import UserLoginInfo from './UserLoginInfo';
 
 function Register({ handleRegisterUser, setHeaderType }) {
@@ -14,9 +15,9 @@ function Register({ handleRegisterUser, setHeaderType }) {
       />
       <p className='login__description'>
         Уже зарегистрированы?{' '}
-        <a className='login__description' href='/sign-in'>
+        <Link className='login__description' to='/sign-in'>
           Войти
-        </a>
+        </Link>
       </p>
     </>
   );

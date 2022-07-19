@@ -23,6 +23,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isLoading }) {
       <input
         id='url'
         className='popup__text-input popup__text-input_order_first'
+        defaultValue=' '
         type='url'
         placeholder='Ссылка на аватар'
         required

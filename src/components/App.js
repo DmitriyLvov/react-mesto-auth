@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ConfirmPopup from './ConfirmPopup';
+import UserInfoPopup from './UserInfoPopup';
 import Spinner from './Spinner';
 import Register from './Register';
 import Login from './Login';
@@ -23,6 +23,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
+  const [isHeaderPopupOpen, setIsHeaderPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({ name: '', link: '' });
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
@@ -47,6 +48,41 @@ function App() {
       .catch((err) => {
         console.log(`Ошибка запроса стартовой информации: ${err}`);
       });
+  }, []);
+
+  //Проверка пользователя
+  useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      authApi
+        .getUserInfo(token)
+        .then((res) => {
+          //Изменяем Header на e-mail пользователя
+          setHeaderType(res.data.email);
+          //Устанавливаем флаг авторизации
+          setIsAuth(true);
+          //Перенаправляем на главную
+          navigate('/');
+        })
+        .catch((er) => navigate('/sign-in'));
+    } else {
+      navigate('/sign-in');
+    }
+  }, []);
+
+  const resizeHandler = (e) => {
+    const width = e.currentTarget.innerWidth;
+    if (width > 540) {
+      setIsHeaderPopupOpen(false);
+    }
+  };
+
+  //Проверка видимости для popup header'a
+  useEffect(() => {
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
   }, []);
 
   //Обработчк открытия Popup для редактирования аватара
@@ -162,6 +198,7 @@ function App() {
       .registerNewUser(data)
       .then((res) => {
         setTooltipData({ isOpen: true, isSucces: true });
+        navigate('/sign-in');
       })
       .catch((er) => {
         setTooltipData({ isOpen: true, isSucces: false });
@@ -169,31 +206,61 @@ function App() {
       });
   };
   //Процедура Login на сайте
-  const login = (data) => {
+  const handleLogin = (data) => {
     authApi
       .login(data)
       .then((res) => {
-        authApi.getUserInfo(res.token).then((res) => {
-          console.log(res.data.email);
-          setHeaderType(res.data.email);
-          setIsAuth(true);
-          navigate('/');
-        });
+        //Сохраняем токен в локальном хранилище
+        localStorage.setItem('jwt', res.token);
+        //Изменяем Header на e-mail пользователя
+        setHeaderType(data.email);
+        //Устанавливаем флаг авторизации
+        setIsAuth(true);
+        //Перенаправляем на главную
+        navigate('/');
       })
       .catch((er) => {
         setTooltipData({ isOpen: true, isSucces: false });
         console.log('Ошибка при входе', er);
       });
   };
+  //Процедура Logout на сайте
+  const handleLogout = () => {
+    //Удаляем токен регистрации
+    localStorage.removeItem('jwt');
+    //Устанавливаем флаг авторизации
+    setIsAuth(false);
+    //Перенаправляем на страницу Login
+    navigate('/sign-in');
+    //Закрываем popup header
+    setIsHeaderPopupOpen(false);
+  };
+  //Процедура закрытия header
+  const handleToggleHeaderPopupVisble = () => {
+    setIsHeaderPopupOpen(!isHeaderPopupOpen);
+  };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className='root'>
-        <Header panelType={headerType} />
+        <UserInfoPopup
+          handleLogout={handleLogout}
+          email={headerType}
+          isVisible={isHeaderPopupOpen}
+        />
+        <Header
+          panelType={headerType}
+          handleLogout={handleLogout}
+          handleToggleHeaderPopupVisble={handleToggleHeaderPopupVisble}
+          isHeaderPopupOpen={isHeaderPopupOpen}
+          isAuth={isAuth}
+        />
         <Routes>
           <Route
             path='/sign-in'
-            element={<Login login={login} setHeaderType={setHeaderType} />}
+            element={
+              <Login handleLogin={handleLogin} setHeaderType={setHeaderType} />
+            }
           />
           <Route
             path='/sign-up'
@@ -222,13 +289,13 @@ function App() {
             }
           />
         </Routes>
-        <Footer />
+
         <InfoToolTip
           isOpen={tooltipData.isOpen}
           isSuccess={tooltipData.isSucces}
           onClose={closeAllPopups}
         />
-        {/* <EditProfilePopup
+        <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
           onUpdateUser={handleUpdateUser}
@@ -257,7 +324,7 @@ function App() {
           onClose={closeAllPopups}
           onConfirm={handleCardDelete}
           isLoading={isLoading}
-        /> */}
+        />
         <Spinner isLoading={isLoading} />
       </div>
     </CurrentUserContext.Provider>

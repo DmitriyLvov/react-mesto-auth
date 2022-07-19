@@ -34,7 +34,6 @@ class authAPI {
       ...this.headers,
       Authorization: `Bearer ${token}`,
     };
-    console.log(headers);
     return fetch(`${this._baseURL}/users/me`, {
       method: 'get',
       headers,

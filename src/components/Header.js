@@ -2,75 +2,64 @@ import React from 'react';
 import logo from '../images/logo.svg';
 import { Link } from 'react-router-dom';
 
-function Header({ panelType }) {
+function Header({
+  panelType,
+  handleLogout,
+  handleToggleHeaderPopupVisble,
+  isHeaderPopupOpen,
+  isAuth,
+}) {
   const getPanel = (panelType) => {
     switch (panelType) {
       case 'login': {
         return (
-          //Не работает переход на страницу. Вероятно из-за версионности
-          // <Link to='/sign-in' className='header__link'>
-          //   Войти
-          // </Link>
-          <a href='/sign-in' className='header__link'>
+          <Link to='/sign-in' className='header__button'>
             Войти
-          </a>
+          </Link>
         );
       }
       case 'register': {
         return (
-          //Не работает переход на страницу. Вероятно из-за версионности
-          // <Link to='/sign-up' className='header__link'>
-          //   Регистрация
-          // </Link>
-          <a href='/sign-up' className='header__link'>
+          <Link to='/sign-up' className='header__button'>
             Регистрация
-          </a>
+          </Link>
         );
       }
       default: {
         return (
-          //Не работает переход на страницу. Вероятно из-за версионности
-          // <Link to='/sign-in' className='header__link'>
-          //   Войти
-          // </Link>
-          <>
-            <p>{panelType}</p>
-            <a href='/sign-in' className='header__link'>
+          <div className='header__panel'>
+            <p className='header__text'>{panelType}</p>
+            <button
+              className='header__button header__button_type_gray'
+              onClick={handleLogout}>
               Выйти
-            </a>
-          </>
+            </button>
+          </div>
         );
       }
     }
-    if (panelType === 'login') {
-      return (
-        //Не работает переход на страницу. Вероятно из-за версионности
-        // <Link to='/sign-in' className='header__link'>
-        //   Войти
-        // </Link>
-        <a href='/sign-in' className='header__link'>
-          Войти
-        </a>
-      );
-    }
-    if (panelType === 'register') {
-      return (
-        //Не работает переход на страницу. Вероятно из-за версионности
-        // <Link to='/sign-up' className='header__link'>
-        //   Регистрация
-        // </Link>
-        <a href='/sign-up' className='header__link'>
-          Регистрация
-        </a>
-      );
-    }
-    if (panelType === 'user') {
-      return <p>"USER"</p>;
-    }
   };
+  const closeButtonStyle =
+    !isHeaderPopupOpen || !isAuth ? { display: 'none' } : {};
+  const menuButtonStyle =
+    isHeaderPopupOpen || !isAuth ? { display: 'none' } : {};
   return (
     <header className='header'>
       <img className='header__logo' src={logo} alt='Логотип' />
+      <button
+        className='header__menu'
+        onClick={handleToggleHeaderPopupVisble}
+        type='button'
+        style={menuButtonStyle}>
+        <div className='header__menu-line' />
+        <div className='header__menu-line' />
+        <div className='header__menu-line' />
+      </button>
+      <button
+        type='button'
+        onClick={handleToggleHeaderPopupVisble}
+        style={closeButtonStyle}
+        className='popup__close-button popup__close-button_type_header'></button>
       {getPanel(panelType)}
     </header>
   );
