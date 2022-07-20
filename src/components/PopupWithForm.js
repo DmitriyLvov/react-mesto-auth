@@ -13,6 +13,7 @@ function PopupWithForm({
   isLoading,
   buttonTextOnLoading,
   onSubmit,
+  isValid,
 }) {
   // //Активация валидации для формы
   // useEffect(() => {
@@ -26,35 +27,34 @@ function PopupWithForm({
   //     validator.toggleButtonState();
   //   }
   // }, [isOpen]);
-  const {
-    formValues,
-    handleChangeInput,
-    errors,
-    isValid,
-    setFormValues,
-    resetForm,
-  } = useFormAndValidation();
+  const disabled = isValid ? 'disabled' : '';
 
   return (
     <div className={popupClassStyle(name, isOpen)}>
       <form
         name={`${name}-form`}
         onSubmit={onSubmit}
-        className={`popup__container popup__container_type_form`}
-      >
+        className={`popup__container popup__container_type_form`}>
         <button
           type='button'
           className='popup__close-button'
-          onClick={onClose}
-        ></button>
+          onClick={onClose}></button>
         <h2 className='popup__title'>{title}</h2>
         {children}
-        <button
-          type='submit'
-          className='popup__submit-button popup__submit-button_type_confirm'
-        >
-          {isLoading ? buttonTextOnLoading : buttonText}
-        </button>
+        {isValid ? (
+          <button
+            type='submit'
+            className='popup__submit-button popup__submit-button_type_confirm'>
+            {isLoading ? buttonTextOnLoading : buttonText}
+          </button>
+        ) : (
+          <button
+            type='submit'
+            className='popup__submit-button popup__submit-button_type_confirm popup__submit-button_disabled'
+            disabled>
+            {isLoading ? buttonTextOnLoading : buttonText}
+          </button>
+        )}
       </form>
     </div>
   );

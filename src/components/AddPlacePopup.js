@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import PopupWithForm from './PopupWithForm';
-import { useForm } from '../hooks/useForm';
+import { useFormAndValidation } from '../hooks/useFormAndValidation';
 
 function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
-  //Хук для измеения инпутов
-  const { formValues, handleChangeInput } = useForm({
-    name: '',
-    link: '',
-  });
-
+  const defaultValues = { name: '', link: '' };
+  const { formValues, handleChangeInput, errors, isValid, resetForm } =
+    useFormAndValidation(defaultValues, false);
   //Подтверждение сохранения картинки
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log();
     onAddPlace(formValues);
+    resetForm();
   };
   return (
     <PopupWithForm
@@ -26,7 +23,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
       buttonText='Добавить'
       buttonTextOnLoading='Добавление'
       isLoading={isLoading}
-    >
+      isValid={isValid}>
       <input
         id='name'
         name='name'
@@ -39,7 +36,9 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
         maxLength='30'
         required
       />
-      <span className='popup__error popup__error_type_name popup__error_order_first' />
+      <span className='popup__error popup__error_type_name popup__error_order_first'>
+        {errors.name}
+      </span>
       <input
         id='path'
         name='link'
@@ -50,7 +49,9 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
         placeholder='Ссылка на картинку'
         required
       />
-      <span className='popup__error popup__error_type_path popup__error_order_second' />
+      <span className='popup__error popup__error_type_path popup__error_order_second'>
+        {errors.link}
+      </span>
     </PopupWithForm>
   );
 }

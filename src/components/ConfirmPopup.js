@@ -17,6 +17,7 @@ function ConfirmPopup({ isOpen, onClose, onConfirm, isLoading }) {
       buttonText='Да'
       buttonTextOnLoading='Подтверждение'
       isLoading={isLoading}
+      isValid={true}
     />
   );
 }

@@ -2,17 +2,24 @@ import React, { useState, useEffect, useContext } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { useForm } from '../hooks/useForm';
+import { useFormAndValidation } from '../hooks/useFormAndValidation';
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
-  const { formValues, setFormValues, handleChangeInput } = useForm({
-    name: '',
-    about: '',
-  });
+  const defaultValues = { name: '', about: '' };
+  const {
+    formValues,
+    handleChangeInput,
+    errors,
+    isValid,
+    setFormValues,
+    resetForm,
+  } = useFormAndValidation(defaultValues, true);
   const currentUser = useContext(CurrentUserContext);
   //Установка данных пользователя по умолчанию
   useEffect(() => {
     //Проверка на сущствование данных
     if (currentUser?.name) {
+      resetForm();
       const { name, about } = currentUser;
       setFormValues({ name, about });
     }
@@ -36,7 +43,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
       buttonTextOnLoading='Сохранение'
       onSubmit={handleSubmit}
       isLoading={isLoading}
-    >
+      isValid={isValid}>
       <input
         id='author'
         name='name'
@@ -48,7 +55,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
         maxLength='40'
         required
       />
-      <span className='popup__error popup__error_type_author popup__error_order_first' />
+      <span className='popup__error popup__error_type_author popup__error_order_first'>
+        {errors.name}
+      </span>
       <input
         id='description'
         name='about'
@@ -60,7 +69,9 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, isLoading }) {
         maxLength='200'
         required
       />
-      <span className='popup__error popup__error_type_description popup__error_order_second' />
+      <span className='popup__error popup__error_type_description popup__error_order_second'>
+        {errors.about}
+      </span>
     </PopupWithForm>
   );
 }

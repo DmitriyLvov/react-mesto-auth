@@ -42,7 +42,6 @@
 @import url('../src/blocks/popup/__image/popup__image.css');
 @import url('../src/blocks/popup/__description/popup__description.css');
 @import url('../src/blocks/popup/__error/popup__error.css');
-@import url('../src/blocks/popup/__error/_visible/popup__error_visible.css');
 @import url('../src/blocks/popup/__error/_order/popup__error_order_first.css');
 @import url('../src/blocks/popup/__error/_order/popup__error_order_second.css');
 

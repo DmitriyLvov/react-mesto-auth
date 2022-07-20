@@ -2,7 +2,7 @@
   "name": "react-mesto-auth",
   "version": "0.1.0",
   "private": false,
-  "homepage": "https://dmitriylvov.github.io/react-mesto-auth/",
+  "homepage": "https://dmitriylvov.github.io/react-mesto-auth",
   "dependencies": {
     "buffer": "^6.0.3",
     "react": "^18.2.0",
