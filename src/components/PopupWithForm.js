@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { popupClassStyle } from '../utils/utils';
-import { FormValidator, validatorSettings } from '../utils/FormValidator';
-import { useFormAndValidation } from '../hooks/useFormAndValidation';
 
 function PopupWithForm({
   title,
@@ -15,20 +13,6 @@ function PopupWithForm({
   onSubmit,
   isValid,
 }) {
-  // //Активация валидации для формы
-  // useEffect(() => {
-  //   const validator = new FormValidator(validatorSettings, `${name}-form`);
-  //   validator.enableValidation();
-  // }, []);
-  // //Проверка активной кнопки при открытии
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     const validator = new FormValidator(validatorSettings, `${name}-form`);
-  //     validator.toggleButtonState();
-  //   }
-  // }, [isOpen]);
-  const disabled = isValid ? 'disabled' : '';
-
   return (
     <div className={popupClassStyle(name, isOpen)}>
       <form
