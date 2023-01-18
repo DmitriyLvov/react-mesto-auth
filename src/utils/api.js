@@ -74,6 +74,10 @@ class Api {
       headers: this._headers,
     }).then((res) => getResponseData(res));
   };
+
+  updateToken = () => {
+    this._headers.authorization = `Bearer ${localStorage.getItem('jwt')}`;
+  };
 }
 
 const api = new Api(process.env.REACT_APP_SERVER_URL, {

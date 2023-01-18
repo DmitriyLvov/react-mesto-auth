@@ -40,6 +40,8 @@ function App() {
   useEffect(() => {
     if (isAuth && !currentUser?.email) {
       setIsLoading(true);
+      // Обновляем токен, если он был изменен в результате логина
+      api.updateToken();
       Promise.all([api.getCards(), api.getAuthorInfo()])
         .then(([cards, userInfo]) => {
           setCards(cards);
