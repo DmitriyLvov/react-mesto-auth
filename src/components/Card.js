@@ -9,7 +9,7 @@ function Card({ card, handleCardClick, onCardLike, onCardDelete }) {
     isOwn ? 'elements__delete-button_visible' : 'elements__delete-button_hidden'
   }`;
   //Определяем, поставили ли лайк мы этой карточке
-  const isLiked = card.likes.some((i) => i._id === currentUser._id);
+  const isLiked = card.likes.some((i) => i === currentUser._id);
   const likeButtonClass = `elements__like ${
     isLiked ? 'elements__like_actived' : 'elements__like_deactivated'
   }`;
