@@ -1,11 +1,12 @@
-import Reactc from 'react';
 import PopupWithForm from './PopupWithForm';
 import { useFormAndValidation } from '../hooks/useFormAndValidation';
 
 function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
   const defaultValues = { name: '', link: '' };
-  const { formValues, handleChangeInput, errors, isValid, resetForm } =
-    useFormAndValidation(defaultValues, false);
+  const { formValues, handleChangeInput, errors, isValid, resetForm } = useFormAndValidation(
+    defaultValues,
+    false,
+  );
   //Подтверждение сохранения картинки
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,44 +15,41 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
   };
   return (
     <PopupWithForm
-      name='card'
-      title='Новое место'
+      name="card"
+      title="Новое место"
       isOpen={isOpen}
       isClose={!isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      buttonText='Добавить'
-      buttonTextOnLoading='Добавление'
+      buttonText="Добавить"
+      buttonTextOnLoading="Добавление"
       isLoading={isLoading}
-      isValid={isValid}>
+      isValid={isValid}
+    >
       <input
-        id='name'
-        name='name'
-        className='popup__text-input popup__text-input_order_first popup__text-input_type_picture-name'
-        type='text'
-        placeholder='Название'
+        id="name"
+        name="name"
+        className="popup__text-input popup__text-input_order_first popup__text-input_type_picture-name"
+        type="text"
+        placeholder="Название"
         onChange={handleChangeInput}
         value={formValues.name}
-        minLength='2'
-        maxLength='30'
+        minLength="2"
+        maxLength="30"
         required
       />
-      <span className='popup__error popup__error_type_name popup__error_order_first'>
-        {errors.name}
-      </span>
+      <span className="popup__error popup__error_type_name popup__error_order_first">{errors.name}</span>
       <input
-        id='path'
-        name='link'
-        className='popup__text-input popup__text-input_order_next popup__text-input_type_picture-path'
+        id="path"
+        name="link"
+        className="popup__text-input popup__text-input_order_next popup__text-input_type_picture-path"
         onChange={handleChangeInput}
-        type='url'
+        type="url"
         value={formValues.link}
-        placeholder='Ссылка на картинку'
+        placeholder="Ссылка на картинку"
         required
       />
-      <span className='popup__error popup__error_type_path popup__error_order_second'>
-        {errors.link}
-      </span>
+      <span className="popup__error popup__error_type_path popup__error_order_second">{errors.link}</span>
     </PopupWithForm>
   );
 }

@@ -1,9 +1,10 @@
-@keyframes hovered {
+@keyframes hovered_delete_icon {
   from {
     opacity: 1;
   }
   to {
     opacity: 0.6;
+    background-image: url('../../../images/TrashBlack.svg');
   }
 }
 
@@ -19,6 +20,6 @@
 }
 
 .elements__delete-button:hover {
-  animation: hovered 0.2s linear forwards;
+  animation: hovered_delete_icon 0.2s linear forwards;
   cursor: pointer;
 }

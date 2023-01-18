@@ -4,7 +4,7 @@ class authAPI {
     this._baseURL = baseURL;
     this._headers = headers;
   }
-  //Регистрация пользоввателя
+  // Регистрация пользоввателя
   registerNewUser = (data) => {
     const { email, password } = data;
     return fetch(`${this._baseURL}/signup`, {
@@ -16,7 +16,7 @@ class authAPI {
       }),
     }).then((res) => getResponseData(res));
   };
-  //Процедура для входа на сайт
+  // Процедура для входа на сайт
   login = (data) => {
     const { email, password } = data;
     return fetch(`${this._baseURL}/signin`, {
@@ -28,7 +28,7 @@ class authAPI {
       }),
     }).then((res) => getResponseData(res));
   };
-  //процедура проверки валидности токена и получения данных пользователя
+  // Процедура проверки валидности токена и получения данных пользователя
   getUserInfo = (token) => {
     const headers = {
       ...this.headers,
@@ -41,7 +41,7 @@ class authAPI {
   };
 }
 
-const authApi = new authAPI('https://auth.nomoreparties.co', {
+const authApi = new authAPI(process.env.REACT_APP_SERVER_URL, {
   'Content-Type': 'application/json',
 });
 

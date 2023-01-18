@@ -38,38 +38,44 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoading(true);
-    Promise.all([api.getCards(), api.getAuthorInfo()])
-      .then(([cards, userInfo]) => {
-        setCards(cards);
-        setCurrentUser({ ...userInfo });
-      })
-      .catch((err) => {
-        console.log(`Ошибка запроса стартовой информации: ${err}`);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+    if (isAuth && !currentUser?.email) {
+      setIsLoading(true);
+      Promise.all([api.getCards(), api.getAuthorInfo()])
+        .then(([cards, userInfo]) => {
+          setCards(cards);
+          setCurrentUser(userInfo);
+        })
+        .catch((err) => {
+          console.log(`Ошибка запроса стартовой информации: ${err}`);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [isAuth, currentUser]);
 
   //Проверка пользователя
   useEffect(() => {
     const token = localStorage.getItem('jwt');
-    if (token) {
+    if (token && !isAuth) {
       authApi
         .getUserInfo(token)
         .then((res) => {
           //Изменяем Header на e-mail пользователя
-          setEmail(res.data.email);
+          setEmail(res.email);
           //Устанавливаем флаг авторизации
           setIsAuth(true);
           //Перенаправляем на главную
           navigate('/');
         })
-        .catch((er) => navigate('/sign-in'));
+        .catch((er) => {
+          console.log(er);
+          navigate('/sign-in');
+        });
     } else {
       navigate('/sign-in');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const resizeHandler = (e) => {
@@ -112,11 +118,7 @@ function App() {
   };
 
   //Обрботчк закрытия popup по клавише ESC
-  const isOpen =
-    isEditAvatarPopupOpen ||
-    isEditProfilePopupOpen ||
-    isAddPlacePopupOpen ||
-    isImagePopupOpen;
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isImagePopupOpen;
 
   useEffect(() => {
     function closeByEscape(evt) {
@@ -171,18 +173,12 @@ function App() {
     isLiked
       ? api
           .removeLike(card._id)
-          .then((newCard) =>
-            setCards((state) =>
-              state.map((c) => (c._id === card._id ? newCard : c))
-            )
-          )
+          .then((newCard) => setCards((state) => state.map((c) => (c._id === card._id ? newCard : c))))
           .catch((er) => console.log('Ошибка удаления лайка: ', er))
       : api
           .addLike(card._id)
           .then((newCard) => {
-            setCards((state) =>
-              state.map((c) => (c._id === card._id ? newCard : c))
-            );
+            setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
           })
           .catch((er) => console.log('Ошибка добавления лайка: ', er));
   };
@@ -192,9 +188,7 @@ function App() {
     api
       .removeCard(selectedCard._id)
       .then(() => {
-        setCards((prevState) =>
-          prevState.filter((c) => c._id !== selectedCard._id)
-        );
+        setCards((prevState) => prevState.filter((c) => c._id !== selectedCard._id));
         closeAllPopups();
       })
       .catch((er) => console.log('Ошибка удаления карточки: ', er));
@@ -265,12 +259,8 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <div className='root'>
-        <UserInfoPopup
-          handleLogout={handleLogout}
-          email={email}
-          isVisible={isHeaderPopupOpen}
-        />
+      <div className="root">
+        <UserInfoPopup handleLogout={handleLogout} email={email} isVisible={isHeaderPopupOpen} />
         <Header
           email={email}
           handleLogout={handleLogout}
@@ -279,16 +269,10 @@ function App() {
           isAuth={isAuth}
         />
         <Routes>
+          <Route path="/sign-in" element={<Login handleLogin={handleLogin} />} />
+          <Route path="/sign-up" element={<Register handleRegisterUser={handleRegisterUser} />} />
           <Route
-            path='/sign-in'
-            element={<Login handleLogin={handleLogin} />}
-          />
-          <Route
-            path='/sign-up'
-            element={<Register handleRegisterUser={handleRegisterUser} />}
-          />
-          <Route
-            path='/'
+            path="/"
             element={
               <ProtectedRoute
                 element={Main}
@@ -299,18 +283,14 @@ function App() {
                 cards={cards}
                 onCardLike={handleCardLike}
                 onCardDelete={handleCardDeleteWithConfirm}
-                path='/'
+                path="/"
                 loggedIn={isAuth}
               />
             }
           />
         </Routes>
 
-        <InfoToolTip
-          isOpen={tooltipData.isOpen}
-          isSuccess={tooltipData.isSucces}
-          onClose={closeAllPopups}
-        />
+        <InfoToolTip isOpen={tooltipData.isOpen} isSuccess={tooltipData.isSucces} onClose={closeAllPopups} />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}

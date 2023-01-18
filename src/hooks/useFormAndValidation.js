@@ -18,7 +18,7 @@ export function useFormAndValidation(defaultValues, defaultIsValid) {
       setErrors(newErrors);
       setIsValid(defaultIsValid);
     },
-    [setFormValues, setErrors, setIsValid]
+    [defaultValues, defaultIsValid],
   );
 
   return {
